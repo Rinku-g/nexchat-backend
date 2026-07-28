@@ -5,7 +5,7 @@ import connetDB from "./config/db.js";
 import http from "http";
 import { Server } from "socket.io";
 import { initializeSocket } from "./sockets/socket.js";
-// import { server } from "socket.io";
+
 
 connetDB();
 
