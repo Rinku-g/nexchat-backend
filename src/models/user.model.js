@@ -7,15 +7,15 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    default: null,
     unique: true,
     sparse: true,
+    default: null,
   },
   phoneNumber: {
     type: String,
-    default: null,
     unique: true,
     sparse: true,
+    default: null,
   },
   password: {
     type: String,
