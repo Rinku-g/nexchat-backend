@@ -1,5 +1,5 @@
 import express from "express";
-import { login, register } from "../controllers/auth.controller.js";
+import { googleLogin, login, register } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { getUsers, getProfile } from "../controllers/user.controller.js";
 import { createChat, getChats } from "../controllers/chat.controller.js";
@@ -13,6 +13,7 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/google-login", googleLogin);
 
 /* ===========================
    User Routes

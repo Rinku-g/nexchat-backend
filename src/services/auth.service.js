@@ -3,6 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateAccessToken } from "../utils/jwt.js";
 import { errorResponse } from "../utils/response.js";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // signup
 export const registerService = async (body) => {
@@ -96,5 +99,52 @@ export const loginService = async (body) => {
     email: user.email,
     phoneNumber: user.phoneNumber,
     token,
+  };
+};
+
+export const googleLoginService = async (token) => {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+
+  let user = await User.findOne({
+    email: payload.email,
+  });
+
+  // User doesn't exist -> Create Google account
+  if (!user) {
+    user = await User.create({
+      username: payload.name,
+      email: payload.email,
+      password: null,
+      googleId: payload.sub,
+      profilePicture: payload.picture,
+      provider: "google",
+    });
+  }
+
+  // User exists but registered using email/password
+  else if (user.provider === "local" && !user.googleId) {
+    user.googleId = payload.sub;
+    user.profilePicture = payload.picture;
+    await user.save();
+  }
+
+  // User already registered with Google
+  else if (user.provider === "google") {
+    // Optional: update profile picture or username
+    user.profilePicture = payload.picture;
+    user.username = payload.name;
+    await user.save();
+  }
+
+  const accessToken = generateAccessToken(user);
+
+  return {
+    token: accessToken,
+    user,
   };
 };

@@ -1,4 +1,4 @@
-import { loginService, registerService } from "../services/auth.service.js";
+import { googleLoginService, loginService, registerService } from "../services/auth.service.js";
 import { errorResponse, successResponse } from "../utils/response.js";
 
 export const register = async (req, res) => {
@@ -16,5 +16,24 @@ export const login = async (req, res) => {
     return successResponse(res, user, "Login Successfully");
   } catch (error) {
     return errorResponse(res, error.message, 400);
+  }
+};
+
+
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    const user = await googleLoginService(token);
+
+    return successResponse(
+      res,
+      user,
+      "Login Successfully",
+      200
+    );
+  } catch (error) {
+    return errorResponse(res, error.message);
   }
 };

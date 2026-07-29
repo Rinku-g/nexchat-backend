@@ -2,8 +2,8 @@ import Chat from "../models/chat.model.js";
 import User from "../models/user.model.js";
 
 export const createChatService = async (loggedInUserId, receiverId) => {
-  if (!loggedInUserId || !receiverId) {
-    throw new Error("Both users are required");
+  if (!receiverId) {
+    throw new Error("This user is not registered. Invite them to join ChatApp."); 
   }
 
   if (loggedInUserId.toString() === receiverId) {
