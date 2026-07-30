@@ -10,7 +10,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // signup
 export const registerService = async (body) => {
   const { username, emailOrPhone, password } = body;
-  console.log(username, emailOrPhone, password);
+
 
   if (!emailOrPhone || !password) {
     throw new Error("Username and password are required.");
@@ -47,12 +47,14 @@ export const registerService = async (body) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({
+  const userData = {
     username,
-    email,
-    phoneNumber,
     password: hashedPassword,
-  });
+    ...(email ? { email } : {}),
+    ...(phoneNumber ? { phoneNumber } : {}),
+  };
+
+  const newUser = await User.create(userData);
 
   return newUser;
 };
